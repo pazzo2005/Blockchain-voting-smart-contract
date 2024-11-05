@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract voting {
+    bool public isVoting;
+
+    struct Vote {
+        address receiver;
+        uint256 timestamp;
+    }
+
+    mapping(address => Vote) public vote;
+
+    event AddVote(address indexed voter, address reciever, uint256 timestamp);
+    event RemoveVote(address voter);
+    event startVote(address startBy);
+    event stopVote(address stopBy);
+ constructor (){
+    isVoting=false;
+}
+function startvote() external returns (bool){
+    isVoting=true;
+    emit startVote(msg.sender);
+    return true;
+}
+function stopvote() external returns(bool){
+    isVoting=false;
+    emit stopVote(msg.sender);
+    return true;
+}
+function addVote(address receiver) external returns(bool){
+    vote[msg.sender].receiver=receiver;
+    vote[msg.sender].timestamp=block.timestamp;
+    emit AddVote(msg.sender,vote[msg.sender].receiver,vote[msg.sender].timestamp);
+    return true;
+}
+function removeVote() external returns(bool){
+    delete vote[msg.sender];
+    emit RemoveVote(msg.sender);
+    return true;
+}
+function getVote(address voterAddress ) external view returns(address candidateAddress) {
+    return vote[voterAddress].receiver;
+}
+
+}
